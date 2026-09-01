@@ -7,6 +7,7 @@ import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 import java.time.Duration;
 
@@ -17,6 +18,7 @@ public class DockerClientConfig {
     private String dockerHostPath;
 
     @Bean
+    @Lazy(false)
     public DockerClient buildDockerClient() {
         DefaultDockerClientConfig.Builder dockerClientConfigBuilder = DefaultDockerClientConfig
                 .createDefaultConfigBuilder();
