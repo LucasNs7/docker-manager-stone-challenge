@@ -13,9 +13,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -39,7 +39,7 @@ class DockerContainersControllerTest {
     @DisplayName("Deve retornar uma lista vazia usando o showAll=true do defaultValue")
     void listContainers() throws Exception {
         List<Container> mockContainersList = Collections.emptyList();
-        when(dockerService.listContainers(false)).thenReturn(mockContainersList);
+        when(dockerService.listContainers(true)).thenReturn(mockContainersList);
 
         // Sem o param showAll
         mockMvc.perform(get("/api/containers"))
@@ -53,7 +53,7 @@ class DockerContainersControllerTest {
     @DisplayName("Deve retornar uma lista vazia usando o showAll=false")
     void listContainers2() throws Exception {
         List<Container> mockContainersList = Collections.emptyList();
-        when(dockerService.listContainers(true)).thenReturn(mockContainersList);
+        when(dockerService.listContainers(false)).thenReturn(mockContainersList);
 
         // Com o param showAll
         mockMvc.perform(get("/api/containers").param("showAll", "false"))
@@ -61,5 +61,53 @@ class DockerContainersControllerTest {
                 .andExpect(content().json("[]"));
 
         verify(dockerService).listContainers(false);
+    }
+
+    @Test
+    @DisplayName("Deve iniciar um container através do id informado na URL")
+    void startContainer() throws Exception {
+        String containerId = UUID.randomUUID().toString();
+        doNothing().when(dockerService).startContainer(containerId);
+
+        mockMvc.perform(post("/api/containers/{id}/start", containerId))
+                .andExpect(status().isOk());
+
+        verify(dockerService).startContainer(containerId);
+    }
+
+    @Test
+    @DisplayName("Deve parar um container através do id informado na URL")
+    void stopContainer() throws Exception {
+        String containerId = UUID.randomUUID().toString();
+        doNothing().when(dockerService).stopContainer(containerId);
+
+        mockMvc.perform(post("/api/containers/{id}/stop", containerId))
+                .andExpect(status().isOk());
+
+        verify(dockerService).stopContainer(containerId);
+    }
+
+    @Test
+    @DisplayName("Deve deletar um container através do id informado na URL")
+    void deleteContainer() throws Exception {
+        String containerId = UUID.randomUUID().toString();
+        doNothing().when(dockerService).deleteContainer(containerId);
+
+        mockMvc.perform(delete("/api/containers/{id}/delete", containerId))
+                .andExpect(status().isOk());
+
+        verify(dockerService).deleteContainer(containerId);
+    }
+
+    @Test
+    @DisplayName("Deve criar um container passando o parâmetro imageName")
+    void createContainer() throws Exception {
+        String imageName = "nginx:latest";
+        doNothing().when(dockerService).createContainer(imageName);
+
+        mockMvc.perform(post("/api/containers").param("imageName", imageName))
+                .andExpect(status().isOk());
+
+        verify(dockerService).createContainer(imageName);
     }
 }
