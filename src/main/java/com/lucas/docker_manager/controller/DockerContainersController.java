@@ -15,7 +15,7 @@ public class DockerContainersController {
     private final DockerService dockerService;
 
     @GetMapping
-    public List<Container> listContainers(@RequestParam boolean showAll) {
+    public List<Container> listContainers(@RequestParam(defaultValue = "true") boolean showAll) {
         return dockerService.listContainers(showAll);
     }
 

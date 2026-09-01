@@ -23,13 +23,13 @@ class DockerServiceTest {
     private DockerClient dockerClient;
 
     @Mock
-    ListContainersCmd listContainersCmd;
+    private ListContainersCmd listContainersCmd;
 
     @Mock
-    StartContainerCmd startContainerCmd;
+    private StartContainerCmd startContainerCmd;
 
     @InjectMocks
-    DockerService dockerService;
+    private DockerService dockerService;
 
     @BeforeEach
     void setUp() {
@@ -38,7 +38,7 @@ class DockerServiceTest {
 
     @Test
     @DisplayName("Deve consultar os containers com showAll=true")
-    public void testListContainersTrue() {
+    void testListContainersTrue() {
         // Mock test
         List<Container> mockContainersList = Collections.emptyList();
 
@@ -58,7 +58,7 @@ class DockerServiceTest {
 
     @Test
     @DisplayName("Deve consultar os containers com showAll=false")
-    public void testListContainersFalse() {
+    void testListContainersFalse() {
         // Mock test
         List<Container> mockContainersList = Collections.emptyList();
 
@@ -78,7 +78,7 @@ class DockerServiceTest {
 
     @Test
     @DisplayName("Deve testar se o id recebido está sendo passado")
-    public void testStartContainer() {
+    void testStartContainer() {
         String containerId = UUID.randomUUID().toString();
         when(dockerClient.startContainerCmd(eq(containerId))).thenReturn(startContainerCmd);
 
@@ -90,7 +90,7 @@ class DockerServiceTest {
 
     @Test
     @DisplayName("Deve testar se o startContainer está lançando a exeção ContainerNotFound")
-    public void testStartContainer2() {
+    void testStartContainer2() {
         String containerId = UUID.randomUUID().toString();
         when(dockerClient.startContainerCmd(eq(containerId))).thenReturn(startContainerCmd);
         when(startContainerCmd.exec()).thenThrow(new NotFoundException("Container Not Found"));
